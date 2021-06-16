@@ -9,9 +9,8 @@ import lombok.Getter;
 @Introspected
 public class ReserveReq {
 
-    private final String authToken;
     private final String memberId;
-    private final String menuDate;
+    private final String reserveDate;
     private final String reserveMasterId;
 
 }

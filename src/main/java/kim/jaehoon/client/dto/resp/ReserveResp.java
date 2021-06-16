@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Introspected
-public class ReserveResponse {
+public class ReserveResp {
 
     private String resultCode;
     private ResultData resultData;
