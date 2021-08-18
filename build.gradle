@@ -1,41 +1,47 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.micronaut.application") version "1.5.0"
+    id 'org.springframework.boot' version '2.5.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'org.springframework.experimental.aot' version '0.10.2'
+    id 'org.graalvm.buildtools.native' version '0.9.1'
 }
 
-version = "0.1"
-group = "kim.jaehoon"
+group = 'kim.jaehoon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
 
-repositories {
-    mavenCentral()
-}
-
-micronaut {
-    runtime("netty")
-    testRuntime("junit5")
-    processing {
-        incremental(true)
-        annotations("kim.jaehoon.*")
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
     }
 }
 
+repositories {
+    maven { url 'https://repo.spring.io/release' }
+    mavenCentral()
+}
+
 dependencies {
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut:micronaut-runtime")
-    implementation("javax.annotation:javax.annotation-api")
-    runtimeOnly("ch.qos.logback:logback-classic")
-    implementation("io.micronaut:micronaut-validation")
-
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.mariadb:r2dbc-mariadb:1.0.2'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
 }
 
-
-application {
-    mainClass.set("kim.jaehoon.Application")
-}
-java {
-    sourceCompatibility = JavaVersion.toVersion("11")
-    targetCompatibility = JavaVersion.toVersion("11")
+test {
+    useJUnitPlatform()
 }
 
+bootBuildImage {
+    builder = 'paketobuildpacks/builder:tiny'
+    environment = ['BP_NATIVE_IMAGE': 'true']
+}
 
-
+nativeBuild {
+    classpath "$buildDir/resources/aot", "$buildDir/classes/java/aot"
+}
